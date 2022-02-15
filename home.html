@@ -4,12 +4,13 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<title>home</title>
 </head>
 <body>
 	<header>
 		<div class="logo_container">
-			<img src="logo.png" alt="logo">
+			<img src="images/logo.png" alt="logo">
 		</div>
 		<nav>
 			<a href="/index.html">Accueil</a>
@@ -17,92 +18,80 @@
 		</nav>
 	</header>
 	<section class="show_video">
-		<div class="show_video__info_command">
+		<div class="show_video__info_command" id="play_container">
 			<h1>"The Shawshank Redemption"</h1>
-			<a href="play" class="button">Play</a>
+			<a href="" class="button" id="play">Play</a>
 			<p>Chronicles the experiences of a formerly successful banker as a prisoner in the gloomy jailhouse of Shawshank after being found guilty of a crime he did not commit. The film portrays the man's unique way of dealing with his new, torturous life; along the way he befriends a number of fellow prisoners, most notably a wise long-term inmate named Red.</p>
 		</div>
 		<div class="show_video__extract">
-			<img src="images/les_evades.jpg" alt="les évadés">
+			<img src="images/les_evades.jpg" alt="top1">
 		</div>
 	</section>
 	<section class="main"> 
 		<h1>Films les mieux notés</h1>
 		<div class="tops"> <!-- conteneur !-->
+			<i class="fa fa-arrow-left fa-2x clickable" id="top_arrow_left"></i>
 			<img src="images/top/le_parrain.jpg">
 			<img src="images/top/le_parrain2.jpg">
 			<img src="images/top/dark_knight.jpg">
 			<img src="images/top/12_hommes_en_colere.jpg">
+			<i class="fa fa-arrow-right fa-2x clickable" id="top_arrow_right"></i>
 		</div>
 	</section>
 	<section class="category">
 		<h1 id="category1">Action</h1>
 		<div class="cat_1">
+			<i class="fa fa-arrow-left fa-2x clickable" id="cat1_arrow_left"></i>
 			<img src="images/action/dark_knight.jpg">
 			<img src="images/action/le_retour_du_roi.jpg">
 			<img src="images/action/inception.jpg">
 			<img src="images/action/la_communaute_de_l_anneau.jpg">
+			<i class="fa fa-arrow-right fa-2x clickable" id="cat1_arrow_right"></i>
 		</div>
 	</section>
 	<section class="category">
-		<h1>Thriller</h1>
+		<h1>Comédie</h1>
 		<div class="cat_2">
+			<i class="fa fa-arrow-left fa-2x clickable" id="cat2_arrow_left"></i>
 			<img src="images/thriller/aynabaji.jpg">
 			<img src="images/thriller/dark_knight.jpg">
 			<img src="images/thriller/inception.jpg">
 			<img src="images/thriller/parasite.jpg">
+			<i class="fa fa-arrow-right fa-2x clickable" id="cat2_arrow_right"></i>
 		</div>
 	</section>
 	<section class="category" id="titi">
 		<h1>Western</h1>
 		<div class="cat_3">
+			<i class="fa fa-arrow-left fa-2x clickable" id="cat3_arrow_left"></i>
 			<img src="images/western/bon_brute_truand.jpg">
 			<img src="images/western/il_etait_une_fois_dans_l_ouest.jpg">
 			<img src="images/western/django_unchained.jpg">
 			<img src="images/western/impitoyable.jpg">
+			<i class="fa fa-arrow-right fa-2x clickable" id="cat3_arrow_right"></i>
 		</div>
 	</section>
-	<script type="text/javascript">
-		const idcateg1 = document.getElementById('category1');
-		idcateg1.style.color = 'green';
-		const classcateg = document.getElementsByClassName('category');
-		const images = document.getElementsByTagName('img');
-		const titleBestFilms = document.querySelector('.main h1');
-		console.log(idcateg1);
-		console.log(images);
-		console.log(titleBestFilms);
-		titleBestFilms.innerHTML = "<h2>Les tops</h2>"
-		document.querySelector(".cat_3").parentElement.style.color = "purple";
-		const toto = document.querySelectorAll("img[src = 'images/western/impitoyable.jpg']");
-		console.log(toto);
-		const titi = document.getElementById("titi");
-		titi.classList.add("NewClass");
-		console.log(titi);
-		titi.classList.add("BadClass");
-		console.log(titi);
-		titi.classList.add("VeryBadClass");
-		console.log(titi);
-		titi.classList.remove("VeryBadClass");
-		console.log(titi);
-		const westernImages = document.getElementsByClassName("BadClass");
-		console.log(westernImages);
-		const bg = document.getElementsByClassName("cat_3")
-		bg[0].style.backgroundColor = "yellow";
-		console.log(bg);
-		document.getElementsByTagName("nav")[0].style.backgroundColor = "orange";
-	</script>
+	<div id="modal">
+		<div id="top_modal">
+			<img id="imageModal" src="images/thriller/aynabaji.jpg">
+			<div id="general_info">
+				<span id="title">Titre du film</span>
+				<span id="genre">Genre complet du film</span>
+				<span id="date">Date de sortie</span>
+				<span id="rated">Rated</span>
+				<span id="score">Score Imdb</span>
+				<span id="directors">Réalisateur</span>
+				<span id="duration">Durée</span>
+				<span id="country">Pays d'origine</span>
+				<span id="income">Résultat au box office</span>
+			</div>	
+		</div>
+		<span id="actors">Actors</span>
+		<span id="summary">Résumé</span>
+		<span id="close_modal" class="clickable">fermer</span>
+	</div>
 	<footer>
-		<input type="text" name="blabla">Entrez du texte
-		<script type="text/javascript">
-			const elt = document.getElementsByTagName("input")[0];
-			elt.setAttribute("type", "password");
-			console.log(elt.getAttribute("name"));
-			elt.setAttribute("name", "bobtry");
-			console.log(elt.getAttribute("name"));
-			const newElt = document.createElement("div");
-			document.getElementsByClassName("cat_3")[0].appendChild(newElt);
-			newElt.innerHTML = "<h1>Film de cowboys</h1>";	
-		</script>
 	</footer>
+	<script type="text/javascript" src="myscript.js"></script>
 </body>
 </html>

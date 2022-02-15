@@ -71,7 +71,7 @@ nav a
 	width: 50%;
 }
 
-img[alt="les évadés"]
+.show_video__extract img
 {
 	object-fit: contain;
 	object-position: center;
@@ -79,7 +79,7 @@ img[alt="les évadés"]
 	height: 100%;
 }
 
-img[alt="les évadés"]:hover
+.show_video__extract img:hover
 {
 	height: 200%;
 	position: relative;
@@ -129,8 +129,70 @@ section > div
 	{
 		background-color: purple;
 	}
+}
+
+.clickable
+{
+	cursor:  pointer;
+}
+
+#modal
+{
+	background-color: green;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	height: 80%;
+	width: 80%;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	visibility: hidden;
+}
+
+#close_modal
+{
+	background-color: deeppink;
+	position: absolute;
+	bottom: 5px;
+	margin: 20px;
+	padding: 10px;
+	border-radius: 20px;
+}
 
 
+#top_modal
+{
+	display: flex;
+	justify-content: flex-start;
+	background-color: yellowgreen;
+}
 
+#imageModal
+{
+	height: 100%;
 
+}
+
+#general_info
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	width: 100%;
+	background-color: white;
+}
+
+#title, #genre, #date, #rated, #score, #directors, #duration, #country, #income
+{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#genre, #date, #rated, #score, #directors, #duration, #country, #income
+{
+	align-self: flex-start;
+	margin-left: 10%;
 }
