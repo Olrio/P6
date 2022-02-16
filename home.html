@@ -10,7 +10,7 @@
 <body>
 	<header>
 		<div class="logo_container">
-			<img src="images/logo.png" alt="logo">
+			<img src="logo.png" alt="logo">
 		</div>
 		<nav>
 			<a href="/index.html">Accueil</a>
@@ -20,7 +20,7 @@
 	<section class="show_video">
 		<div class="show_video__info_command" id="play_container">
 			<h1>"The Shawshank Redemption"</h1>
-			<a href="" class="button" id="play">Play</a>
+			<button id="play" class="clickable">Play</button>
 			<p>Chronicles the experiences of a formerly successful banker as a prisoner in the gloomy jailhouse of Shawshank after being found guilty of a crime he did not commit. The film portrays the man's unique way of dealing with his new, torturous life; along the way he befriends a number of fellow prisoners, most notably a wise long-term inmate named Red.</p>
 		</div>
 		<div class="show_video__extract">
@@ -86,9 +86,11 @@
 				<span id="income">Résultat au box office</span>
 			</div>	
 		</div>
-		<span id="actors">Actors</span>
-		<span id="summary">Résumé</span>
-		<span id="close_modal" class="clickable">fermer</span>
+		<div id="bottom_modal">
+			<div id="actors">Actors</div>
+			<div id="summary">Résumé</div>
+			<button id="close" class="clickable">fermer</button>
+		</div>	
 	</div>
 	<footer>
 	</footer>

@@ -57,12 +57,15 @@ nav a
 	overflow: auto;
 }
 
-.button
+#play, #close
 {
 	background-color: red;
 	color: white;
-	text-decoration: none;
-	padding: 20px;
+	border-radius: 20px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
 .show_video__extract
@@ -79,12 +82,6 @@ nav a
 	height: 100%;
 }
 
-.show_video__extract img:hover
-{
-	height: 200%;
-	position: relative;
-	z-index: 1;
-}
 
 h1
 {
@@ -108,12 +105,6 @@ h1
 	width: 10%;
 	height: 10%;
 	margin: 5px;
-}
-
-.tops img:hover, .cat_1 img:hover, .cat_2 img:hover, .cat_3 img:hover
-{
-	height: 20%;
-	width: 20%;
 }
 
 
@@ -151,22 +142,20 @@ section > div
 	visibility: hidden;
 }
 
-#close_modal
-{
-	background-color: deeppink;
-	position: absolute;
-	bottom: 5px;
-	margin: 20px;
-	padding: 10px;
-	border-radius: 20px;
-}
-
 
 #top_modal
 {
 	display: flex;
 	justify-content: flex-start;
 	background-color: yellowgreen;
+}
+
+#close
+{
+	width: 100px;
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
 }
 
 #imageModal
@@ -183,6 +172,7 @@ section > div
 	align-items: center;
 	width: 100%;
 	background-color: white;
+	height: 400px;
 }
 
 #title, #genre, #date, #rated, #score, #directors, #duration, #country, #income
@@ -196,3 +186,27 @@ section > div
 	align-self: flex-start;
 	margin-left: 10%;
 }
+
+#bottom_modal
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#actors
+{
+	background-color: deeppink;
+	padding: 20px;
+	height: 50px;
+	overflow: scroll;
+}
+
+#summary
+{
+	background-color: mediumpurple;
+	padding: 20px;
+	height: 150px;
+	overflow: scroll;
+}
+

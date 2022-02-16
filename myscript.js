@@ -1,85 +1,22 @@
 /*jslint es6 */
 
-
-//get 5 films with filtered conditions
-function getFilms(filter) {
-	let movies = fetch(`http://localhost:8000/api/v1/titles/${filter}`)
-	.then(function(res) {
-		if (res.ok) {
-			return res.json();
-		}
-	})
-	.catch(function(error) {
-		console.log("Erreur :", error);
-	})
-	return movies
-}
-
-
-//create array of 7 films
-function categoryFilms(category5, data, div, startFilm, endFilm) {
-	for (let movie=startFilm;movie<5;movie++) {
-		category5.then(function(value) {
-			data.push(value.results[movie])
-		})
+async function getBestFilm() {
+	await fetch("http://localhost:8000/api/v1/titles/?sort_by=-imdb_score,-votes")
+.then(await function(res) {
+	if (res.ok) {
+		return res.json();
 	}
-	category5.then(function(value) {
-		fetch(value.next)
-		.then(function(res) {
-			if (res.ok) {
-				return res.json();
-			}
-		})
-		.catch(function(error) {
-			console.log("error : ", error);
-		})
-		.then(function(value) {
-			for (let movie2=0;movie2<(endFilm-5);movie2++) {
-				data.push(value.results[movie2]);
-			}
-		})
-		for (let movie=0;movie<4;movie++) {
-			document.querySelector(div).children[movie+1].src = data[movie].image_url;
-			document.querySelector(div).children[movie+1].id = data[movie].id;
-		}
-	})
-	return data;
-}
-
-
-//get top films
-let top5 = getFilms("?sort_by=-imdb_score,-votes");
-let top7Movies = categoryFilms(top5, [], ".tops", 1, 8);
-
-
-//get action films
-let action5 = getFilms("?genre=action&sort_by=-imdb_score,-votes");
-let action7Movies = categoryFilms(action5, [], ".cat_1", 0, 7);
-
-//get comedy films
-let comedy5 = getFilms("?genre=comedy&sort_by=-imdb_score,-votes");
-let comedy7Movies = categoryFilms(comedy5, [], ".cat_2", 0, 7);
-
-//get western films
-let western5 = getFilms("?genre=western&sort_by=-imdb_score,-votes");
-let western7Movies = categoryFilms(western5, [], ".cat_3", 0, 7);
-
-
-
+})
+.catch( await function(error) {
+	console.log("Error : ", error)
+})
 //get image for the best film
-top5.then(function(value) {
-//get image for film N°1
+.then( await function(value) {
+//get data for film N°1
 document.querySelector(".show_video__extract img").src= value.results[0].image_url;
 document.querySelector(".show_video__extract img").id= value.results[0].id
-});
-
-//get title for the best film
-title_top1 = top5.then(function(value) {
 document.querySelector("#play_container h1").innerText = value.results[0].title
-});
-
 //get summary for the best film. Need a new request with fetch
-url_description_top1 = top5.then(function(value) {
 fetch(value.results[0].url)
 .then(function(res) {
 	if (res.ok) {
@@ -91,30 +28,90 @@ fetch(value.results[0].url)
 })
 .then(function(data) {
 document.querySelector("#play_container p").innerText = data.long_description;
+return value.results[0];
 });
 });
+
+}
+
+
+
+
+async function newGetFilms(genre, movies, nbOfMovies, div, start, end) {
+	let page = 1;
+	let status = 1;
+	while (status == 1) {
+		await fetch(`http://localhost:8000/api/v1/titles/?genre=${genre}&sort_by=-imdb_score,-votes&page=${page}`)
+	.then(function(res) {
+		if (res.ok) {
+			return res.json();
+		}
+	})
+	.catch(function(error) {
+		console.log("Erreur :", error);
+	})
+	.then(await function(value) {
+		for (movie of value.results) {		
+			if (movies.length<nbOfMovies) {
+				movies.push(movie)
+			} else {
+				place=1;
+				for (let movie=start;movie<end;movie++) {
+			document.querySelector(div).children[place].src = movies[movie].image_url;
+			document.querySelector(div).children[place].id = movies[movie].id;
+			place++;
+		}
+				status=0;
+			}		
+		}
+		
+	})
+	page++;
+	}
+	if (movies==topMovies) {
+		movies.shift();
+	}
+	return movies;
+}
+
+//get a given number of top films 
+let topMovies = [];
+let actionMovies = [];
+let comedyMovies = [];
+let westernMovies = [];
+let nbTopMovies = 11;
+let nbActionMovies = 18;
+let nbComedyMovies = 22;
+let nbWesternMovies = 17;
+
+let bestFilm = getBestFilm();
+// we add +1 to nbTopMovies since the best film shouldn't be in carousel
+newGetFilms("", topMovies, nbTopMovies+1, ".tops",1,5);
+newGetFilms("action", actionMovies, nbActionMovies, ".cat_1",0,4);
+newGetFilms("comedy", comedyMovies, nbComedyMovies, ".cat_2",0,4);
+newGetFilms("western", westernMovies, nbWesternMovies, ".cat_3",0,4);
 
 
 
 //management of top films carousel
 
 document.querySelector("#top_arrow_left").addEventListener("click", function(e) {
-	let lastMovie = top7Movies.pop();
-	top7Movies.unshift(lastMovie);
+	let lastMovie = topMovies.pop();
+	topMovies.unshift(lastMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".tops").children[movie+1].src = `${top7Movies[movie].image_url}`;
-		document.querySelector(".tops").children[movie+1].id = `${top7Movies[movie].id}`;
+		document.querySelector(".tops").children[movie+1].src = `${topMovies[movie].image_url}`;
+		document.querySelector(".tops").children[movie+1].id = `${topMovies[movie].id}`;
 
 	}
 
 })
 
 document.querySelector("#top_arrow_right").addEventListener("click", function(e) {
-	let firstMovie = top7Movies.shift();
-	top7Movies.push(firstMovie);
+	let firstMovie = topMovies.shift();
+	topMovies.push(firstMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".tops").children[movie+1].src = `${top7Movies[movie].image_url}`;
-		document.querySelector(".tops").children[movie+1].id = `${top7Movies[movie].id}`;
+		document.querySelector(".tops").children[movie+1].src = `${topMovies[movie].image_url}`;
+		document.querySelector(".tops").children[movie+1].id = `${topMovies[movie].id}`;
 
 	}
 
@@ -123,22 +120,22 @@ document.querySelector("#top_arrow_right").addEventListener("click", function(e)
 //management of cat1 films carousel
 
 document.querySelector("#cat1_arrow_left").addEventListener("click", function(e) {
-	let lastMovie = action7Movies.pop();
-	action7Movies.unshift(lastMovie);
+	let lastMovie = actionMovies.pop();
+	actionMovies.unshift(lastMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_1").children[movie+1].src = `${action7Movies[movie].image_url}`;
-		document.querySelector(".cat_1").children[movie+1].id = `${action7Movies[movie].id}`;
+		document.querySelector(".cat_1").children[movie+1].src = `${actionMovies[movie].image_url}`;
+		document.querySelector(".cat_1").children[movie+1].id = `${actionMovies[movie].id}`;
 
 	}
 
 })
 
 document.querySelector("#cat1_arrow_right").addEventListener("click", function(e) {
-	let firstMovie = action7Movies.shift();
-	action7Movies.push(firstMovie);
+	let firstMovie = actionMovies.shift();
+	actionMovies.push(firstMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_1").children[movie+1].src = `${action7Movies[movie].image_url}`;
-		document.querySelector(".cat_1").children[movie+1].id = `${action7Movies[movie].id}`;
+		document.querySelector(".cat_1").children[movie+1].src = `${actionMovies[movie].image_url}`;
+		document.querySelector(".cat_1").children[movie+1].id = `${actionMovies[movie].id}`;
 
 	}
 
@@ -147,22 +144,22 @@ document.querySelector("#cat1_arrow_right").addEventListener("click", function(e
 //management of cat2 films carousel
 
 document.querySelector("#cat2_arrow_left").addEventListener("click", function(e) {
-	let lastMovie = comedy7Movies.pop();
-	comedy7Movies.unshift(lastMovie);
+	let lastMovie = comedyMovies.pop();
+	comedyMovies.unshift(lastMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_2").children[movie+1].src = `${comedy7Movies[movie].image_url}`;
-		document.querySelector(".cat_2").children[movie+1].id = `${comedy7Movies[movie].id}`;
+		document.querySelector(".cat_2").children[movie+1].src = `${comedyMovies[movie].image_url}`;
+		document.querySelector(".cat_2").children[movie+1].id = `${comedyMovies[movie].id}`;
 
 	}
 
 })
 
 document.querySelector("#cat2_arrow_right").addEventListener("click", function(e) {
-	let firstMovie = comedy7Movies.shift();
-	comedy7Movies.push(firstMovie);
+	let firstMovie = comedyMovies.shift();
+	comedyMovies.push(firstMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_2").children[movie+1].src = `${comedy7Movies[movie].image_url}`;
-		document.querySelector(".cat_2").children[movie+1].id = `${comedy7Movies[movie].id}`;
+		document.querySelector(".cat_2").children[movie+1].src = `${comedyMovies[movie].image_url}`;
+		document.querySelector(".cat_2").children[movie+1].id = `${comedyMovies[movie].id}`;
 
 	}
 
@@ -171,28 +168,28 @@ document.querySelector("#cat2_arrow_right").addEventListener("click", function(e
 //management of cat3 films carousel
 
 document.querySelector("#cat3_arrow_left").addEventListener("click", function(e) {
-	let lastMovie = western7Movies.pop();
-	western7Movies.unshift(lastMovie);
+	let lastMovie = westernMovies.pop();
+	westernMovies.unshift(lastMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_3").children[movie+1].src = `${western7Movies[movie].image_url}`;
-		document.querySelector(".cat_3").children[movie+1].id = `${western7Movies[movie].id}`;
+		document.querySelector(".cat_3").children[movie+1].src = `${westernMovies[movie].image_url}`;
+		document.querySelector(".cat_3").children[movie+1].id = `${westernMovies[movie].id}`;
 
 	}
 
 })
 
 document.querySelector("#cat3_arrow_right").addEventListener("click", function(e) {
-	let firstMovie = western7Movies.shift();
-	western7Movies.push(firstMovie);
+	let firstMovie = westernMovies.shift();
+	westernMovies.push(firstMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_3").children[movie+1].src = `${western7Movies[movie].image_url}`;
-		document.querySelector(".cat_3").children[movie+1].id = `${western7Movies[movie].id}`;
+		document.querySelector(".cat_3").children[movie+1].src = `${westernMovies[movie].image_url}`;
+		document.querySelector(".cat_3").children[movie+1].id = `${westernMovies[movie].id}`;
 
 	}
 
 })
 
-document.querySelector("#close_modal").addEventListener("click", function() {
+document.querySelector("#close").addEventListener("click", function() {
 	document.querySelector("#modal").style.visibility = "hidden";
 })
 
@@ -224,9 +221,12 @@ for (let image of allImages) {
 	document.querySelector("#duration").innerText = `Durée : ${value.duration} minutes`;
 	document.querySelector("#country").innerText = `Pays d'origine : ${value.countries}`;
 	document.querySelector("#income").innerText = `Recettes : ${value.worldwide_gross_income} $`;
-	document.querySelector("#actors").innerText = `Acteurs : ${value.actors}`;
-	document.querySelector("#summary").innerText = `Résumé : ${value.long_description}`;
+	document.querySelector("#actors").innerHTML = `<ul> Acteurs : </ul>`;
+	for (let actor of value.actors) {
+		let li = document.createElement('li');
+		li.innerHTML = actor;
+		document.querySelector("#actors").appendChild(li);
+	}
+	document.querySelector("#summary").innerText = `Résumé : \n ${value.long_description}`;
 	})
 })};
-
-
