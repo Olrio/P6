@@ -1,6 +1,6 @@
 # P6
 
-This project uses a locally-executable REST API : OCMovies-API
+This project uses a locally-executable REST API : OCMovies-API <br>
 Please refer to explanations on https://github.com/OpenClassrooms-Student-Center/OCMovies-API-EN-FR for its use.
 
 Once API server is installed and launched, you can open the `index.html` on your browser.
