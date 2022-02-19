@@ -1,17 +1,16 @@
-/*jslint es6 */
-
-async function getBestFilm() {
-	await fetch("http://localhost:8000/api/v1/titles/?sort_by=-imdb_score,-votes")
-.then(await function(res) {
+//a function was created which, if needed, enables to reuse collected data
+function getBestFilm() {
+	fetch("http://localhost:8000/api/v1/titles/?sort_by=-imdb_score,-votes")
+.then(function(res) {
 	if (res.ok) {
 		return res.json();
 	}
 })
-.catch( await function(error) {
-	console.log("Error : ", error)
+.catch(function(error) {
+	displayError(error, "best");
 })
-//get image for the best film
-.then( await function(value) {
+//get title and image for the best film
+.then(function(value) {
 //get data for film N°1
 document.querySelector(".show_video__extract img").src= value.results[0].image_url;
 document.querySelector(".show_video__extract img").id= value.results[0].id
@@ -24,20 +23,26 @@ fetch(value.results[0].url)
 	}
 })
 .catch(function(error) {
-	console.log("Erreur :", error);
+	displayError(error, "Top 1 summary");
 })
 .then(function(data) {
 document.querySelector("#play_container p").innerText = data.long_description;
 return value.results[0];
 });
 });
-
 }
 
 
+//display where and why occured an error
+function displayError(error, genre) {
+	console.log(error);
+	window.alert(`Erreur - impossible de récupérer les informations demandées pour \n${genre} films\n ${error}`);
+}
 
 
-async function newGetFilms(genre, movies, nbOfMovies, div, start, end) {
+//an async function is needed to prevent an infinite while loop
+//
+async function getFilms(genre, movies, nbOfMovies, div, start, end) {
 	let page = 1;
 	let status = 1;
 	while (status == 1) {
@@ -48,14 +53,20 @@ async function newGetFilms(genre, movies, nbOfMovies, div, start, end) {
 		}
 	})
 	.catch(function(error) {
-		console.log("Erreur :", error);
+		if (genre==""){
+			genre="tops";
+		}
+		displayError(error, genre);
 	})
-	.then(await function(value) {
+	.then(function(value) {
 		for (movie of value.results) {		
 			if (movies.length<nbOfMovies) {
 				movies.push(movie)
 			} else {
 				place=1;
+				if (genre) {
+					document.querySelector(div).parentElement.firstElementChild.innerText = genre;
+				}	
 				for (let movie=start;movie<end;movie++) {
 			document.querySelector(div).children[place].src = movies[movie].image_url;
 			document.querySelector(div).children[place].id = movies[movie].id;
@@ -76,124 +87,75 @@ async function newGetFilms(genre, movies, nbOfMovies, div, start, end) {
 
 //get a given number of top films 
 let topMovies = [];
-let actionMovies = [];
-let comedyMovies = [];
-let westernMovies = [];
-let nbTopMovies = 11;
-let nbActionMovies = 18;
-let nbComedyMovies = 22;
-let nbWesternMovies = 17;
+let cat1Movies = [];
+let cat2Movies = [];
+let cat3Movies = [];
+let nbTopMovies = 7;
+let nbCat1Movies = 7;
+let nbCat2Movies = 7;
+let nbCat3Movies = 7;
+let cat1 = "horror";
+let cat2 = "animation";
+let cat3 = "western";
 
-let bestFilm = getBestFilm();
+//get data for the best noted film
+getBestFilm();
 // we add +1 to nbTopMovies since the best film shouldn't be in carousel
-newGetFilms("", topMovies, nbTopMovies+1, ".tops",1,5);
-newGetFilms("action", actionMovies, nbActionMovies, ".cat_1",0,4);
-newGetFilms("comedy", comedyMovies, nbComedyMovies, ".cat_2",0,4);
-newGetFilms("western", westernMovies, nbWesternMovies, ".cat_3",0,4);
+getFilms("", topMovies, nbTopMovies+1, ".tops",1,5);
+getFilms(cat1, cat1Movies, nbCat1Movies, ".cat1",0,4);
+getFilms(cat2, cat2Movies, nbCat2Movies, ".cat2",0,4);
+getFilms(cat3, cat3Movies, nbCat3Movies, ".cat3",0,4);
 
 
 
-//management of top films carousel
+//functions to manage left and right translations in carousels
 
-document.querySelector("#top_arrow_left").addEventListener("click", function(e) {
-	let lastMovie = topMovies.pop();
-	topMovies.unshift(lastMovie);
+function leftTranslation(category, selector) {
+	let lastMovie = category.pop();
+	category.unshift(lastMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".tops").children[movie+1].src = `${topMovies[movie].image_url}`;
-		document.querySelector(".tops").children[movie+1].id = `${topMovies[movie].id}`;
+		document.querySelector(selector).children[movie+1].src = `${category[movie].image_url}`;
+		document.querySelector(selector).children[movie+1].id = `${category[movie].id}`;
+}
+}
 
-	}
-
-})
-
-document.querySelector("#top_arrow_right").addEventListener("click", function(e) {
-	let firstMovie = topMovies.shift();
-	topMovies.push(firstMovie);
+function rightTranslation(category, selector) {
+	let firstMovie = category.shift();
+	category.push(firstMovie);
 	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".tops").children[movie+1].src = `${topMovies[movie].image_url}`;
-		document.querySelector(".tops").children[movie+1].id = `${topMovies[movie].id}`;
+		document.querySelector(selector).children[movie+1].src = `${category[movie].image_url}`;
+		document.querySelector(selector).children[movie+1].id = `${category[movie].id}`;
+}
+}
 
-	}
 
+//The carousel collection stores element, selector, data 
+//and translation-orientation for the carousel
+
+const carousel = new Map();
+carousel.set("#top_arrow_left", [".tops", topMovies, leftTranslation]);
+carousel.set("#top_arrow_right", [".tops", topMovies, rightTranslation]);
+carousel.set("#cat1_arrow_left", [".cat1", cat1Movies, leftTranslation]);
+carousel.set("#cat1_arrow_right", [".cat1", cat1Movies, rightTranslation]);
+carousel.set("#cat2_arrow_left", [".cat2", cat2Movies, leftTranslation]);
+carousel.set("#cat2_arrow_right", [".cat2", cat2Movies, rightTranslation]);
+carousel.set("#cat3_arrow_left", [".cat3", cat3Movies, leftTranslation]);
+carousel.set("#cat3_arrow_right", [".cat3", cat3Movies, rightTranslation]);
+
+for (let [key, value] of carousel) {
+	document.querySelector(key).addEventListener("click", function(e) {
+	value[2](value[1], value[0]);
 })
+}
 
-//management of cat1 films carousel
 
-document.querySelector("#cat1_arrow_left").addEventListener("click", function(e) {
-	let lastMovie = actionMovies.pop();
-	actionMovies.unshift(lastMovie);
-	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_1").children[movie+1].src = `${actionMovies[movie].image_url}`;
-		document.querySelector(".cat_1").children[movie+1].id = `${actionMovies[movie].id}`;
-
-	}
-
-})
-
-document.querySelector("#cat1_arrow_right").addEventListener("click", function(e) {
-	let firstMovie = actionMovies.shift();
-	actionMovies.push(firstMovie);
-	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_1").children[movie+1].src = `${actionMovies[movie].image_url}`;
-		document.querySelector(".cat_1").children[movie+1].id = `${actionMovies[movie].id}`;
-
-	}
-
-})
-
-//management of cat2 films carousel
-
-document.querySelector("#cat2_arrow_left").addEventListener("click", function(e) {
-	let lastMovie = comedyMovies.pop();
-	comedyMovies.unshift(lastMovie);
-	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_2").children[movie+1].src = `${comedyMovies[movie].image_url}`;
-		document.querySelector(".cat_2").children[movie+1].id = `${comedyMovies[movie].id}`;
-
-	}
-
-})
-
-document.querySelector("#cat2_arrow_right").addEventListener("click", function(e) {
-	let firstMovie = comedyMovies.shift();
-	comedyMovies.push(firstMovie);
-	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_2").children[movie+1].src = `${comedyMovies[movie].image_url}`;
-		document.querySelector(".cat_2").children[movie+1].id = `${comedyMovies[movie].id}`;
-
-	}
-
-})
-
-//management of cat3 films carousel
-
-document.querySelector("#cat3_arrow_left").addEventListener("click", function(e) {
-	let lastMovie = westernMovies.pop();
-	westernMovies.unshift(lastMovie);
-	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_3").children[movie+1].src = `${westernMovies[movie].image_url}`;
-		document.querySelector(".cat_3").children[movie+1].id = `${westernMovies[movie].id}`;
-
-	}
-
-})
-
-document.querySelector("#cat3_arrow_right").addEventListener("click", function(e) {
-	let firstMovie = westernMovies.shift();
-	westernMovies.push(firstMovie);
-	for (let movie=0; movie<4; movie++) {
-		document.querySelector(".cat_3").children[movie+1].src = `${westernMovies[movie].image_url}`;
-		document.querySelector(".cat_3").children[movie+1].id = `${westernMovies[movie].id}`;
-
-	}
-
-})
-
+//modal close evenement
 document.querySelector("#close").addEventListener("click", function() {
 	document.querySelector("#modal").style.visibility = "hidden";
 })
 
 
+//modal open evenement
 // creating an array from all images for click management
 let allImages = Array.from(document.getElementsByTagName('img'));
 //logo JustStreamIt is remmoved from array
@@ -208,7 +170,7 @@ for (let image of allImages) {
 		}
 	})
 	.catch(function(error) {
-		console.log("error :", error)
+		displayError(error);
 	})
 	.then(function(value) {
 	document.querySelector("#modal img").src = value.image_url;
@@ -221,12 +183,12 @@ for (let image of allImages) {
 	document.querySelector("#duration").innerText = `Durée : ${value.duration} minutes`;
 	document.querySelector("#country").innerText = `Pays d'origine : ${value.countries}`;
 	document.querySelector("#income").innerText = `Recettes : ${value.worldwide_gross_income} $`;
-	document.querySelector("#actors").innerHTML = `<ul> Acteurs : </ul>`;
+	document.querySelector("#actors").innerHTML = `<ul> <span id='color_actor'>Acteurs : </span></ul>`;
 	for (let actor of value.actors) {
 		let li = document.createElement('li');
 		li.innerHTML = actor;
 		document.querySelector("#actors").appendChild(li);
 	}
-	document.querySelector("#summary").innerText = `Résumé : \n ${value.long_description}`;
+	document.querySelector("#summary").innerHTML = `<span id='color_summary'>Résumé : </span>\n ${value.long_description}`;
 	})
 })};
