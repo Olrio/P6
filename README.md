@@ -10,5 +10,5 @@ Default settings of the js script are :
   - 7 images per category
   - horror, animation and western for the three categories
   
-It's possible to select another number of images in the caroussel by modification of `nbCatxMovies` value.
+It's possible to select another number of images in the caroussel by modification of `nbCatxMovies` value. <br>
 Other genres are possible by replacing strings in `cat1`, `cat2` or `cat3` variables.
