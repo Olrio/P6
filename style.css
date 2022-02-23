@@ -96,7 +96,7 @@ nav a
 }
 
 
-h1
+h2
 {
 	text-align: center;
 	font-size: 1rem;
@@ -268,7 +268,6 @@ section > div
 	{
 	    width: auto;
 	    padding: 10px;
-	    margin-top: 10px;
 	}
 
 	#modal
@@ -283,6 +282,12 @@ section > div
 		flex-direction: column;
 		align-items: center;
 		height: auto;
+	}
+
+	#general_info
+	{
+	    padding:0;
+	    width:90%;
 	}
 
 	#imageModal

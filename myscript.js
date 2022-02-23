@@ -13,8 +13,8 @@ function getBestFilm() {
 .then(function(value) {
 //get data for film N°1
 document.querySelector(".show_video__extract img").src= value.results[0].image_url;
-document.querySelector(".show_video__extract img").id= value.results[0].id
-document.querySelector("#play_container h1").innerText = value.results[0].title
+document.querySelector(".show_video__extract img").id= value.results[0].id;
+document.querySelector("#play_container h2").innerText = value.results[0].title;
 //get summary for the best film. Need a new request with fetch
 fetch(value.results[0].url)
 .then(function(res) {
@@ -36,7 +36,7 @@ return value.results[0];
 //display where and why occured an error
 function displayError(error, genre) {
 	console.log(error);
-	window.alert(`Erreur - impossible de récupérer les informations demandées pour \n${genre} films\n ${error}`);
+	window.alert(`Error - cant get data for \n${genre} films\n ${error}`);
 }
 
 
@@ -59,11 +59,11 @@ async function getFilms(genre, movies, nbOfMovies, div, start, end) {
 		displayError(error, genre);
 	})
 	.then(function(value) {
-		for (movie of value.results) {		
+		for (let movie of value.results) {
 			if (movies.length<nbOfMovies) {
-				movies.push(movie)
+				movies.push(movie);
 			} else {
-				place=1;
+				let place=1;
 				if (genre) {
 					document.querySelector(div).parentElement.firstElementChild.innerText = genre;
 				}	
@@ -76,7 +76,7 @@ async function getFilms(genre, movies, nbOfMovies, div, start, end) {
 			}		
 		}
 		
-	})
+	});
 	page++;
 	}
 	if (movies==topMovies) {
@@ -143,16 +143,16 @@ carousel.set("#cat3_arrow_left", [".cat3", cat3Movies, leftTranslation]);
 carousel.set("#cat3_arrow_right", [".cat3", cat3Movies, rightTranslation]);
 
 for (let [key, value] of carousel) {
-	document.querySelector(key).addEventListener("click", function(e) {
+	document.querySelector(key).addEventListener("click", function() {
 	value[2](value[1], value[0]);
-})
+});
 }
 
 
 //modal close evenement
 document.querySelector("#close").addEventListener("click", function() {
 	document.querySelector("#modal").style.visibility = "hidden";
-})
+});
 
 
 //modal open evenement
@@ -161,7 +161,7 @@ let allImages = Array.from(document.getElementsByTagName('img'));
 //logo JustStreamIt is remmoved from array
 allImages.shift();
 for (let image of allImages) {
-	image.addEventListener("click", function(e) {
+	image.addEventListener("click", function() {
 	document.querySelector("#modal").style.visibility = "visible";
 	fetch(`http://localhost:8000/api/v1/titles/${image.id}`)
 	.then(function(res) {
@@ -176,19 +176,19 @@ for (let image of allImages) {
 	document.querySelector("#modal img").src = value.image_url;
 	document.querySelector("#title").innerText = value.title;
 	document.querySelector("#genre").innerText = `Genre : ${value.genres}`;
-	document.querySelector("#date").innerText = `Date de sortie : ${value.date_published}`;
-	document.querySelector("#rated").innerText = `Classification : ${value.rated}`;
-	document.querySelector("#score").innerText = `Score Imdb : ${value.imdb_score}`;
-	document.querySelector("#directors").innerText = `Réalisateur(s) : ${value.directors}`;
-	document.querySelector("#duration").innerText = `Durée : ${value.duration} minutes`;
-	document.querySelector("#country").innerText = `Pays d'origine : ${value.countries}`;
-	document.querySelector("#income").innerText = `Recettes : ${value.worldwide_gross_income} $`;
-	document.querySelector("#actors").innerHTML = `<ul> <span id='color_actor'>Acteurs : </span></ul>`;
+	document.querySelector("#date").innerText = `Release date : ${value.date_published}`;
+	document.querySelector("#rated").innerText = `Rated : ${value.rated}`;
+	document.querySelector("#score").innerText = `Imdb Score: ${value.imdb_score}`;
+	document.querySelector("#directors").innerText = `Director(s) : ${value.directors}`;
+	document.querySelector("#duration").innerText = `Runtime : ${value.duration} minutes`;
+	document.querySelector("#country").innerText = `Country of origin : ${value.countries}`;
+	document.querySelector("#income").innerText = `Box office gross worldwide : ${value.worldwide_gross_income} $`;
+	document.querySelector("#actors").innerHTML = `<ul> <span id='color_actor'>Actors : </span></ul>`;
 	for (let actor of value.actors) {
 		let li = document.createElement('li');
 		li.innerHTML = actor;
 		document.querySelector("#actors").appendChild(li);
 	}
-	document.querySelector("#summary").innerHTML = `<span id='color_summary'>Résumé : </span>\n ${value.long_description}`;
-	})
-})};
+	document.querySelector("#summary").innerHTML = `<span id='color_summary'>Summary : </span>\n ${value.long_description}`;
+	});
+});}
