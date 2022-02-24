@@ -1,3 +1,46 @@
+//creation of carousels
+//creration of a default image
+function defImage(alt) {
+    let image = document.createElement('img');
+    image.src = "nofile.jpg";
+    image.alt = alt;
+    return image;
+}
+
+//creation of a HTML section corresponding with one category of films
+function defSection(title, selector, arrow_left, arrow_right, categories) {
+    let section = document.createElement('section');
+    let h2 = document.createElement('h2');
+    h2.innerText = title;
+    let div = document.createElement('div');
+    div.className = selector;
+    let iLeft = document.createElement('i');
+    iLeft.classList.add("fa", "fa-arrow-left", "fa-2x", "clickable");
+    iLeft.id = arrow_left;
+    let iRight = document.createElement('i');
+    iRight.classList.add("fa", "fa-arrow-right", "fa-2x", "clickable");
+    iRight.id = arrow_right;
+    document.querySelector(".show_video").after(section);
+    section.appendChild(h2);
+    section.appendChild(div);
+    div.appendChild(iLeft);
+    for (let img =0;img<4;img++) {
+        div.appendChild(defImage(categories[img]));
+    }
+    div.appendChild(iRight);
+}
+
+let topsCategory = ["top2", "top3", "top4", "top5"];
+let firstCategory = ["cat1_1", "cat1_2", "cat1_3", "cat1_4"];
+let secondCategory = ["cat2_1", "cat2_2", "cat2_3", "cat2_4"];
+let thirdCategory = ["cat3_1", "cat3_2", "cat3_3", "cat3_4"];
+
+
+defSection("Category 3", "cat3", "cat3_arrow_left", "cat3_arrow_right", thirdCategory);
+defSection("Category 2", "cat2", "cat2_arrow_left", "cat2_arrow_right", secondCategory);
+defSection("Category 1", "cat1", "cat1_arrow_left", "cat1_arrow_right", firstCategory);
+defSection("Best noted movies", "tops", "top_arrow_left", "top_arrow_right", topsCategory);
+
 //a function was created which, if needed, enables to reuse collected data
 function getBestFilm() {
 	fetch("http://localhost:8000/api/v1/titles/?sort_by=-imdb_score,-votes")
@@ -170,7 +213,7 @@ for (let image of allImages) {
 		}
 	})
 	.catch(function(error) {
-		displayError(error);
+		displayError(error, "selected");
 	})
 	.then(function(value) {
 	document.querySelector("#modal img").src = value.image_url;
