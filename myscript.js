@@ -201,7 +201,8 @@ document.querySelector("#close").addEventListener("click", function() {
 //modal open evenement
 // creating an array from all images for click management
 let allImages = Array.from(document.getElementsByTagName('img'));
-//logo JustStreamIt is remmoved from array
+//logo JustStreamIt and Modal image are removed from array
+allImages.shift();
 allImages.shift();
 for (let image of allImages) {
 	image.addEventListener("click", function() {

@@ -43,6 +43,7 @@ nav a
 	text-decoration: none;
 	color: black;
 	margin: 20px;
+	pointer-events: none;
 }
 
 .show_video
