@@ -3,7 +3,7 @@
 This project uses a locally-executable REST API : OCMovies-API <br>
 Please refer to explanations on https://github.com/OpenClassrooms-Student-Center/OCMovies-API-EN-FR for its use.
 
-Once API server is installed and launched, you can open the `index.html` on your browser.
+Once API server is installed and launched, you can open the `home.html` on your browser.
 The `index.html` file calls the two files `style.css` and `myscript.js` for visual settings and dynamic modifications.
 
 Default settings of the js script are :
